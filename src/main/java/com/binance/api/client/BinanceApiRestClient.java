@@ -1,15 +1,6 @@
 package com.binance.api.client;
 
-import com.binance.api.client.domain.account.Account;
-import com.binance.api.client.domain.account.DepositAddress;
-import com.binance.api.client.domain.account.DepositHistory;
-import com.binance.api.client.domain.account.NewOrder;
-import com.binance.api.client.domain.account.NewOrderResponse;
-import com.binance.api.client.domain.account.Order;
-import com.binance.api.client.domain.account.Trade;
-import com.binance.api.client.domain.account.TradeHistoryItem;
-import com.binance.api.client.domain.account.WithdrawHistory;
-import com.binance.api.client.domain.account.WithdrawResult;
+import com.binance.api.client.domain.account.*;
 import com.binance.api.client.domain.account.request.AllOrdersRequest;
 import com.binance.api.client.domain.account.request.CancelOrderRequest;
 import com.binance.api.client.domain.account.request.CancelOrderResponse;
@@ -165,6 +156,14 @@ public interface BinanceApiRestClient {
   NewOrderResponse newOrder(NewOrder order);
 
   /**
+   * Send in a new OCO order.
+   *
+   * @param order the new order to submit.
+   * @return a response containing details about the newly placed order.
+   */
+  OcoOrderResponse newOcoOrder(NewOrder order);
+
+  /**
    * Test new order creation and signature/recvWindow long. Creates and validates a new order but does not send it into the matching engine.
    *
    * @param order the new TEST order to submit.
@@ -185,6 +184,13 @@ public interface BinanceApiRestClient {
    * @param cancelOrderRequest order status request parameters
    */
   CancelOrderResponse cancelOrder(CancelOrderRequest cancelOrderRequest);
+
+  /**
+   * Cancel an active OCO order. Both legs will be cancelled.
+   * @param cancelOrderRequest order request parameters
+   * @return order execution status
+   */
+  OcoOrderResponse cancelOcoOrder(CancelOrderRequest cancelOrderRequest);
 
   /**
    * Get all open orders on a symbol.

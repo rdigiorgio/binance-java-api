@@ -31,6 +31,11 @@ public class Order {
   private String clientOrderId;
 
   /**
+   * Collective order id to which this order belongs (for OCO order legs)
+   */
+  private String orderListId;
+
+  /**
    * Price.
    */
   private String price;
@@ -123,6 +128,14 @@ public class Order {
 
   public void setClientOrderId(String clientOrderId) {
     this.clientOrderId = clientOrderId;
+  }
+
+  public String getOrderListId() {
+    return orderListId;
+  }
+
+  public void setOrderListId(String orderListId) {
+    this.orderListId = orderListId;
   }
 
   public String getPrice() {

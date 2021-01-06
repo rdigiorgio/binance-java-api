@@ -3,6 +3,8 @@ package com.binance.api.client.impl;
 import com.binance.api.client.BinanceApiRestClient;
 import com.binance.api.client.config.BinanceApiConfig;
 import com.binance.api.client.constant.BinanceApiConstants;
+import com.binance.api.client.domain.OrderType;
+import com.binance.api.client.domain.TimeInForce;
 import com.binance.api.client.domain.account.*;
 import com.binance.api.client.domain.account.request.*;
 import com.binance.api.client.domain.general.Asset;
@@ -112,6 +114,10 @@ public class BinanceApiRestClientImpl implements BinanceApiRestClient {
 
   @Override
   public NewOrderResponse newOrder(NewOrder order) {
+    if (order.getType() == OrderType.OCO) {
+      throw new IllegalArgumentException("Please use newOcoOrder instead");
+    }
+
     final Call<NewOrderResponse> call;
     if (order.getQuoteOrderQty() == null) {
       call = binanceApiService.newOrder(order.getSymbol(), order.getSide(), order.getType(),
@@ -125,6 +131,13 @@ public class BinanceApiRestClientImpl implements BinanceApiRestClient {
           order.getRecvWindow(), order.getTimestamp());
     }
     return executeSync(call);
+  }
+
+  @Override
+  public OcoOrderResponse newOcoOrder(NewOrder order) {
+    return executeSync(binanceApiService.newOcoOrder(order.getSymbol(), order.getNewClientOrderId(), order.getSide(), order.getQuantity(), order.getLimitClientOrderId(),
+            order.getPrice(), order.getIcebergQty(), order.getStopClientOrderId(), order.getStopPrice(), order.getStopLimitPrice(), TimeInForce.GTC,
+            order.getNewOrderRespType(), order.getRecvWindow(), order.getTimestamp()));
   }
 
   @Override
@@ -148,6 +161,13 @@ public class BinanceApiRestClientImpl implements BinanceApiRestClient {
     return executeSync(binanceApiService.cancelOrder(cancelOrderRequest.getSymbol(),
         cancelOrderRequest.getOrderId(), cancelOrderRequest.getOrigClientOrderId(), cancelOrderRequest.getNewClientOrderId(),
         cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()));
+  }
+
+  @Override
+  public OcoOrderResponse cancelOcoOrder(CancelOrderRequest cancelOrderRequest) {
+    return executeSync(binanceApiService.cancelOcoOrder(cancelOrderRequest.getSymbol(),
+            cancelOrderRequest.getOrderId(), cancelOrderRequest.getOrigClientOrderId(), cancelOrderRequest.getNewClientOrderId(),
+            cancelOrderRequest.getRecvWindow(), cancelOrderRequest.getTimestamp()));
   }
 
   @Override
